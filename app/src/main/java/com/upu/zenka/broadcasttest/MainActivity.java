@@ -75,7 +75,6 @@ import static com.upu.zenka.broadcasttest.util.NetUtil.mContext;
 import static com.upu.zenka.broadcasttest.util.SharedUtils.saveStringData;
 public class MainActivity extends AppCompatActivity implements MyView.BroadcastView,MyView.MusicView{
     public static final String TAG="MainActivity";
-    public static final String aassds="sss";
 
     public static final String IMAGE_SDCARD_MADER ="/mnt/sdcard/";
     private static final String BASE_PATH= Environment.getExternalStorageDirectory()+"";
