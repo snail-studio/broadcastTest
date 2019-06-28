@@ -38,6 +38,7 @@ import com.upu.zenka.broadcasttest.bean.vertifyBean;
 import com.upu.zenka.broadcasttest.listener.DownloadListener;
 import com.upu.zenka.broadcasttest.presenter.broadcastPresenter;
 import com.upu.zenka.broadcasttest.tools.Getip;
+import com.upu.zenka.broadcasttest.tools.LogSave;
 import com.upu.zenka.broadcasttest.tools.geneDeviceCode;
 import com.upu.zenka.broadcasttest.tools.getTime;
 import com.upu.zenka.broadcasttest.tools.publicParam;
@@ -330,7 +331,6 @@ public class MainActivity extends AppCompatActivity implements MyView.BroadcastV
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,6,0);
         initFolder();
-
         wifiUtil=new WifiUtil(this);
         wifiUtil.closeWifiHotspot();
 
@@ -403,6 +403,15 @@ public class MainActivity extends AppCompatActivity implements MyView.BroadcastV
         initInfo();
         Log.i(TAG,"启动完成");
 
+    }
+
+    private void creatDir(){
+        FileUtil.isExist(IMAGE_SDCARD_MADER + "broadcast/");
+        FileUtil.isExist(IMAGE_SDCARD_MADER + "broadcast/class/");
+        FileUtil.isExist(IMAGE_SDCARD_MADER + "broadcast/data/");
+        FileUtil.isExist(IMAGE_SDCARD_MADER + "broadcast/data/log");
+        FileUtil.isExist(IMAGE_SDCARD_MADER + "broadcast/temp/");
+        FileUtil.isExist(IMAGE_SDCARD_MADER + "broadcast/crash/");
     }
     public class initThread extends Thread {
         @Override
@@ -485,17 +494,24 @@ public class MainActivity extends AppCompatActivity implements MyView.BroadcastV
                     Thread.sleep(1);
                     if (isIdle) {
                         delay(4999);
+                        LogSave.saveLog("空闲时间，不进行网络测试");
                         continue;
                     }
                     if(NettestReturn) {
                         Log.i(TAG,"循环调用NettestReturn="+NettestReturn);
                         while (isGetSpeaking){
+                            LogSave.saveLog("isGetSpeaking=true，等待");
                             delay(9);
                         }
+                        LogSave.saveLog("发送网络测试请求");
                         broadcastpresenter.netTest(deviceid, publicParam.schoolId);
+
                         Log.i(TAG,"调用"+"netTest");
                         NettestReturn=false;
+                        LogSave.saveLog("NettestReturn置false");
                         Log.i(TAG,"循环调用NettestReturn="+NettestReturn);
+                    }else{
+                        LogSave.saveLog("NettestReturn=false，不进行网络测试");
                     }
                     Thread.sleep(intervalTime_netTest);
 
@@ -577,6 +593,7 @@ public class MainActivity extends AppCompatActivity implements MyView.BroadcastV
 //                    if (getTime.gettime().equals("12:00:00")||getTime.gettime().equals("12:00:01")){
 //                        reboot();
 //                    }
+                    LogSave.saveLog("时间循环");
                     if (isIniting||!isActivate) {
                         Log.i(TAG, "未进入轮询isIniting=" + isIniting + ";isActivate=" + isActivate);
                         Thread.sleep(1000);
@@ -587,11 +604,13 @@ public class MainActivity extends AppCompatActivity implements MyView.BroadcastV
                     }
                     if (!isAmSettime(getCurtime())&&!isPmSettime(getCurtime())){
                         isIdle=true;
+                        LogSave.saveLog("进入空闲时间");
                         Message MSG = Message.obtain();
                         MSG.what = 10011;
                         MSG.obj = "publicParam.amtimeIn="+publicParam.pmtimeIn;
                         myHandler.sendMessage(MSG);
                         if ((getCurtime()-LastVerifyTime)>300000){
+                            LogSave.saveLog("空闲时间调用verify");
                             broadcastpresenter.verify(publicParam.deviceid);
                             Log.i(TAG,"空闲时间调用verify");
                             LastVerifyTime=getCurtime();
@@ -747,13 +766,14 @@ public class MainActivity extends AppCompatActivity implements MyView.BroadcastV
         if(code==10001){
             isfirstNetget=false;
             NettestReturn=true;
+            LogSave.saveLog("网络测试失败，NettestReturn置true");
             Log.i(TAG,"NettestReturn="+NettestReturn);
             netOk=false;
             Log.i(TAG,"错误代码"+code);
            // Toast.makeText(this,"网络连接失败",Toast.LENGTH_SHORT).show();
         }
         if (code==10002){
-            ;
+            LogSave.saveLog("设备验证失败");
         }
         if (code==10008){
             localip= Getip.getHostIP();
