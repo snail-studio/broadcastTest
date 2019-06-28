@@ -89,6 +89,12 @@ public class FileUtil {
             return 0;
         }
     }
+    public static void isExist(String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdir();
+        }
+    }
     public static String loadFromFile(File file){
 
         StringBuilder content = new StringBuilder();
