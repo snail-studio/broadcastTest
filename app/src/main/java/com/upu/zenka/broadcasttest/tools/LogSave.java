@@ -26,7 +26,7 @@ public class LogSave {
             String fileName = "spk-"+time+ ".log";
             sb.append(format2.format(new Date())+":"+getCurtime()+" "+log+"\r\n");
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                String path = Environment.getExternalStorageDirectory() + "/broadcast/crash/";
+                String path = Environment.getExternalStorageDirectory() + "/broadcast/data/log/";
                 File dir = new File(path);
                 if (!dir.exists()) {
                     dir.mkdirs();
