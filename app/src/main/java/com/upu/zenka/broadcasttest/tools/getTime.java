@@ -81,8 +81,8 @@ public class getTime {
         }
     }
     public static long getCurtime(){
-        //curtime=System.currentTimeMillis()+publicParam.OFFSET;
-        curtime=System.currentTimeMillis();
+        curtime=System.currentTimeMillis()+publicParam.OFFSET;
+        //curtime=System.currentTimeMillis();
         return curtime;
     }
 }
