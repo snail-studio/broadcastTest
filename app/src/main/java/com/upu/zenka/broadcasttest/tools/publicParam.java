@@ -43,5 +43,5 @@ public class publicParam {
     public static List<IpinfoBean> nativeServerList;
     public static String BASE_URL="http://jytest.upuai.com/";
     public static long OFFSET=0;
-    public static String Version="V1.0.2019605";
+    public static String Version="V1.0.2019628";
 }
